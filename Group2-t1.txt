@@ -1,0 +1,17 @@
+Start:
+p4c-bm2-ss --p4v 16 -o l3_switching.json Group2-t1.p4
+sudo simple_switch -i 0@port0 -i 1@port1 -i 2@port2 -i 3@port3 l3_switching.json &
+
+IPv4 CLI commands:
+simple_switch_CLI
+table_set_default MyIngress.ipv4_forwarding drop
+table_add MyIngress.ipv4_forwarding MyIngress.set_egress 10.0.0.0/24 => 1
+table_add MyIngress.ipv4_forwarding MyIngress.set_egress 10.0.0.0/8 => 2
+table_add MyIngress.ipv4_forwarding MyIngress.set_egress 10.0.0.0/16 => 3
+
+IPv6 CLI commands:
+simple_switch_CLI
+table_set_default MyIngress.ipv6_forwarding drop
+table_add MyIngress.ipv6_forwarding MyIngress.set_egress 2001::/16 => 1
+table_add MyIngress.ipv6_forwarding MyIngress.set_egress 2001:4860:4860::/48 => 2
+table_add MyIngress.ipv6_forwarding MyIngress.set_egress 2001:610:158:960::/64 => 3

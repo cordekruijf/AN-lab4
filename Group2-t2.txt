@@ -1,0 +1,10 @@
+Start:
+p4c-bm2-ss --p4v 16 -o l3_switching.json Group2-t2.p4
+sudo tshark -n -i veth0 -i veth1 -i veth2 -i veth3 -T fields -e frame.time_relative -e \
+frame.interface_name -e eth -e ip -e ipv6 -e udp -e tcp -e ip.ttl -e ipv6.hlim
+
+Commands:
+sendp(Ether()/IP(dst="10.0.0.1", ttl=10), iface="veth0")
+sendp(Ether()/IP(dst="10.0.0.1", ttl=1), iface="veth0")
+sendp(Ether()/IPv6(dst="2001:0:0:1::5", hlim=10), iface="veth0")
+sendp(Ether()/IPv6(dst="2001:0:0:1::5", hlim=1), iface="veth0")
