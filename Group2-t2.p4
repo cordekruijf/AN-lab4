@@ -104,8 +104,7 @@ control MyIngress(inout headers_t hdr, inout user_metadata_t umd, inout standard
     action ipv4_forward(macAddr_t dst, egressSpec_t port) {
         smd.egress_spec = port;
         hdr.ethernet.src = hdr.ethernet.dst;
-        // hdr.ethernet.dst = dst;
-        hdr.ethernet.dst = "00:00:00:00:00:01";
+        hdr.ethernet.dst = dst;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
