@@ -1,9 +1,32 @@
 Start:
+sudo killall simple_switch
 p4c-bm2-ss --p4v 16 -o l3_switching.json Group2-t2.p4
+sudo simple_switch -i 0@port0 -i 1@port1 -i 2@port2 -i 3@port3 l3_switching.json &
+
+Scapy:
+sudo scapy
+p = Ether(src=RandMAC(),dst=RandMAC())/IP(src=RandIP(),dst=RandIP())/ \
+UDP(sport=RandShort(),dport=RandShort())
+
+IPv4 CLI commands:
+simple_switch_CLI
+table_set_default MyIngress.ipv4_forwarding drop
+table_add MyIngress.ipv4_forwarding MyIngress.set_egress 10.0.0.0/24 => 1
+table_add MyIngress.ipv4_forwarding MyIngress.set_egress 10.0.0.0/8 => 2
+table_add MyIngress.ipv4_forwarding MyIngress.set_egress 10.0.0.0/16 => 3
+
+IPv6 CLI commands:
+simple_switch_CLI
+table_set_default MyIngress.ipv6_forwarding drop
+table_add MyIngress.ipv6_forwarding MyIngress.set_egress 2001::/16 => 1
+table_add MyIngress.ipv6_forwarding MyIngress.set_egress 2001:4860:4860::/48 => 2
+table_add MyIngress.ipv6_forwarding MyIngress.set_egress 2001:610:158:960::9/64 => 3
+
+Tshark:
 sudo tshark -n -i veth0 -i veth1 -i veth2 -i veth3 -T fields -e frame.time_relative -e \
 frame.interface_name -e eth -e ip -e ipv6 -e udp -e tcp -e ip.ttl -e ipv6.hlim
 
-Commands:
+Commands (Scapy):
 sendp(Ether()/IP(dst="10.0.0.1", ttl=10), iface="veth0")
 sendp(Ether()/IP(dst="10.0.0.1", ttl=1), iface="veth0")
 sendp(Ether()/IPv6(dst="2001:0:0:1::5", hlim=10), iface="veth0")

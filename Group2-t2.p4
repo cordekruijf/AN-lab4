@@ -3,6 +3,7 @@
 /* Include V1 Model switch architecture */
 #include <v1model.p4>
 
+typedef bit<48> macAddr_t;
 typedef bit<9>  egressSpec_t;
 
 /* Describes the format of an Ethernet header */
@@ -67,15 +68,15 @@ parser MyParser(packet_in pkt, out headers_t hdr, inout user_metadata_t umd, ino
     }
 
     state parse_ipv4 {
-	/* Parse IPv4 header and accept it */ 
-	pkt.extract(hdr.ipv4);
-	transition accept;
+        /* Parse IPv4 header and accept it */ 
+        pkt.extract(hdr.ipv4);
+        transition accept;
     }
 
     state parse_ipv6 {
-	/* Also parse IPv6 header and accept it */
-	pkt.extract(hdr.ipv6);
-	transition accept;	
+        /* Also parse IPv6 header and accept it */
+        pkt.extract(hdr.ipv6);
+        transition accept;	
     }
 }
 
@@ -100,14 +101,14 @@ control MyIngress(inout headers_t hdr, inout user_metadata_t umd, inout standard
     }
 
     /* Source: https://github.com/p4lang/tutorials/tree/master/exercises/basic */
-    action ipv4_forward(bit<48> dst, egressSpec_t port) {
+    action ipv4_forward(macAddr_t dst, egressSpec_t port) {
         smd.egress_spec = port;
         hdr.ethernet.src = hdr.ethernet.dst;
         hdr.ethernet.dst = dst;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
-    action ipv6_forward(bit<48> dst, egressSpec_t port) {
+    action ipv6_forward(macAddr_t dst, egressSpec_t port) {
         smd.egress_spec = port;
         hdr.ethernet.src = hdr.ethernet.dst;
         hdr.ethernet.dst = dst;
@@ -174,16 +175,16 @@ control MyDeparser(packet_out pkt, in headers_t hdr) {
         /* Emitting a header appends the header to the out going packet only if the header is valid. */
         pkt.emit(hdr.ethernet);
         pkt.emit(hdr.ipv4);
-	pkt.emit(hdr.ipv6);
+	    pkt.emit(hdr.ipv6);
     }
 }
 
 /* This instantiate the V1 Model Switch */.
 V1Switch(
- MyParser(),
- MyVerifyChecksum(),
- MyIngress(),
- MyEgress(),
- MyComputeChecksum(),
- MyDeparser()
+    MyParser(),
+    MyVerifyChecksum(),
+    MyIngress(),
+    MyEgress(),
+    MyComputeChecksum(),
+    MyDeparser()
 ) main;

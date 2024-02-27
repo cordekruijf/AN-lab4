@@ -121,9 +121,9 @@ control MyIngress(inout headers_t hdr, inout user_metadata_t umd, inout standard
     }
 
     apply {
-	if (hdr.ipv4.isValid()) {
-	    ipv4_forwarding.apply();
-	}
+        if (hdr.ipv4.isValid()) {
+            ipv4_forwarding.apply();
+        }
 
         if (hdr.ipv6.isValid()) {
             ipv6_forwarding.apply();
@@ -150,16 +150,16 @@ control MyDeparser(packet_out pkt, in headers_t hdr) {
         /* Emitting a header appends the header to the out going packet only if the header is valid. */
         pkt.emit(hdr.ethernet);
         pkt.emit(hdr.ipv4);
-	pkt.emit(hdr.ipv6);
+	    pkt.emit(hdr.ipv6);
     }
 }
 
 /* This instantiate the V1 Model Switch */.
 V1Switch(
- MyParser(),
- MyVerifyChecksum(),
- MyIngress(),
- MyEgress(),
- MyComputeChecksum(),
- MyDeparser()
+    MyParser(),
+    MyVerifyChecksum(),
+    MyIngress(),
+    MyEgress(),
+    MyComputeChecksum(),
+    MyDeparser()
 ) main;
