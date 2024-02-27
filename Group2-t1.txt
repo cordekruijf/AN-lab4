@@ -1,4 +1,5 @@
 Start:
+sudo killall simple_switch
 p4c-bm2-ss --p4v 16 -o l3_switching.json Group2-t1.p4
 sudo simple_switch -i 0@port0 -i 1@port1 -i 2@port2 -i 3@port3 l3_switching.json &
 
