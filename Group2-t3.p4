@@ -123,6 +123,10 @@ control MyIngress(inout headers_t hdr, inout user_metadata_t umd, inout standard
         hdr.ethernet.src = hdr.ethernet.dst;
         hdr.ethernet.dst = dst;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+
+        if (hdr.ipv4.ttl == 0) {
+            drop();
+        }
     }
 
     action ipv6_forward(bit<48> dst, egressSpec_t port) {
@@ -130,6 +134,10 @@ control MyIngress(inout headers_t hdr, inout user_metadata_t umd, inout standard
         hdr.ethernet.src = hdr.ethernet.dst;
         hdr.ethernet.dst = dst;
         hdr.ipv6.hop_limit = hdr.ipv6.hop_limit - 1;
+
+        if (hdr.ipv6.hop_limit == 0) {
+            drop();
+        }
     }
 
     table ipv4_forwarding {
